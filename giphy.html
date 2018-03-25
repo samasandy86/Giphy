@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Giphy Images</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <style type="text/css">
+        button,
+        div,
+        form,
+        input {
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1></h1>
+
+        <!-- Movies will get dumped here -->
+        <form id="movie-form">
+            <label for="movie-input">Add a Movie Bro</label>
+            <input type="text" id="movie-input">
+            <br>
+
+            <!-- Button triggers new movie to be added -->
+            <input id="add-movie" type="submit" value="Add a Movie Bro">
+        </form>
+        <div class="container">
+            <div class="col-md-12">
+                <div id="giphy-buttons"><span class="close" style="color: red;">X</span></div>
+            </div>
+            <div class="col-md-12">
+                <div id="giphy-view"></div>
+            </div>
+        </div>
+
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            // Initial array of movies
+            let movies = ["The Matrix", "The Notebook", "Mr. Nobody", "The Lion King"];
+
+
+
+            function displayMovieInfo(event) {
+
+                const movie = $(event.target).data("name");
+                console.log(movie);
+
+                const queryURL = "https://api.giphy.com/v1/gifs/search?&q=" + movie + "&api_key=2P9avNVL5Yzlp3J98PRdhXYhJRndijLS";
+                $.ajax({
+                    url: queryURL,
+                    method: 'GET'
+                }).then(function (response) {
+                    for (let i = 0; i < response.data.length; i++) {
+                        let movieTemplate = `<div style="float: left;"><p style="font-size: 20px;">RATING:  ${response.data[i].rating}</p><img src="${response.data[i].images.original.url}"/></div>`
+                        $("#giphy-view").append(movieTemplate);
+
+                    }
+                    console.log(response);
+                })
+
+            };
+
+            function removeButton() {
+                $(".close").click(function () {
+                    $(event.target).closest("giphy-buttons");
+                });
+            }
+
+            // Function for displaying movie data
+            function renderButtons() {
+
+                // Deleting the movie buttons prior to adding new movie buttons
+                // (this is necessary otherwise we will have repeat buttons)
+                $("#giphy-buttons").empty();
+
+                // Looping through the array of movies
+                for (let i = 0; i < movies.length; i++) {
+
+                    // Then dynamicaly generating buttons for each movie in the array.
+                    // This code $("<button>") is all jQuery needs to create the start and end tag. (<button></button>)
+                    const button = $("<button>");
+                    // Adding a class
+                    button.addClass("movie");
+                    // Adding a data-attribute with a value of the movie at index i
+                    button.attr("data-name", movies[i]);
+                    // Providing the button's text with a value of the movie at index i
+                    button.text(movies[i]);
+                    // Adding the button to the HTML
+                    $("#giphy-buttons").append(button);
+
+                    $(".close").append(button);
+
+                    
+                }
+            }
+
+
+            // This function handles events where one button is clicked
+            $("#add-movie").on("click", function (event) {
+                // event.preventDefault() prevents the form from trying to submit itself.
+                // We're using a form so that the user can hit enter instead of clicking the button if they want
+                event.preventDefault();
+
+                // This line will grab the text from the input box
+                let movie = $("#movie-input").val().trim();
+                // The movie from the textbox is then added to our array
+                movies.push(movie);
+
+                // calling renderButtons which handles the processing of our movie array
+                renderButtons();
+            });
+
+            $(document).on("click", ".movie", displayMovieInfo);
+
+            // Calling the renderButtons function at least once to display the initial list of movies
+            renderButtons();
+
+
+        </script>
+    </div>
+</body>
+
+</html>
