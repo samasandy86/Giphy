@@ -6,167 +6,58 @@
   <title>Giphy Images</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
     crossorigin="anonymous">
-  <style type="text/css">
-    button,
-    div,
-    form,
-    input {
-      margin: 10px;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
 </head>
 
 <body>
 
-  <div class="container">
-    <h1></h1>
+  <div class="jumbotron">
+    <div class="container">
+      <h1>The Poorly Visual Designed Website</h1>
+    </div>
+  </div>
 
-    <!-- Gifs will get dumped here -->
-    <form id="giphy-form">
+  <!-- Gifs will get dumped here -->
+  <form id="giphy-form">
+    <div class="container">
       <div class="row">
-        <div class="col-md-12">
-          <input id="giphy-images" type="submit" value="Add Button">
+        <div class="col-md-7 col-sm-12 ">
+          <p>This is the poorly designed website. Visually you will be so bored with looking at this site that you will be eager
+            to do anything to take your eye off the horribly designed aesthetic.
+            <br />
+            <br /> Enter some text in the <b>INPUT</b> field to the right. This will create a
+            <b>BUTTON</b>
+            for you to click on. When you click on the button gif images pop up and will animate on click. Yay!
+
+          </p>
+        </div>
+        <div class="col-md-4 input-field">
+          <input id="giphy-images" type="submit" value="Add Button" class="btn btn-primary">
           <input type="Search a Gif" id="giphy-input">
         </div>
         <!-- Button triggers new gif to be added -->
       </div>
-    </form>
-    <div class="container">
-      <div class="col-md-12">
-        <div id="giphy-buttons">
-          <span class="close" style="color: red;">X</span>
-        </div>
-      </div>
-      <div class="col-md-12">
-        <div id="giphy-view"></div>
-      </div>
     </div>
+  </form>
+  <div class="container">
+    <div class="col-md-12">
+      <div id="giphy-buttons"></div>
+    </div>
+    <div class="col-md-12">
+      <div id="giphy-view" class="giphy-view"></div>
+    </div>
+  </div>
+  <footer>
+    <div id="footer" class="container">
+      <h4 id="copyright">&copy; Copyright 2018 Sama Sandy</h4>
+    </div>
+  </footer>
 
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript">
-
-      $(document).ready(function () {
-
-        //========== STARTING GIF BUTTONS =======//
-        /*  These are the starting buttons & gifs for the user */
-        /*  Function for the initial buttons (let gifs variables) listed above  */
-
-        let gifs = ["The Matrix", "The Notebook", "Mr. Nobody", "The Lion King"];
-
-        // ======= DISPLAY GIF IMAGES ========
-        // Displays GIFS on webpage
-
-
-        function displayGiphyInfo(event) {
-
-          const gif = $(event.target).data("name");
-          const queryURL = "https://api.giphy.com/v1/gifs/search?&q=" + gif + "&api_key=2P9avNVL5Yzlp3J98PRdhXYhJRndijLS&limit=20";
-          $.ajax({
-            url: queryURL,
-            method: 'GET'
-          }).then(function (response) {
-            for (let i = 0; i < response.data.length; i++) {
-              let giphyRating = $(`<p style="font-size: 20px;">RATING: ${response.data[i].rating}</p>`);
-              // <img class="gif" src="${response.data[i].images.fixed_height.url}"/></div>
-              let giphyImages = $('<img>');
-              giphyImages.attr("src", response.data[i].images.fixed_height_still.url);
-              giphyImages.attr("data-still", response.data[i].images.fixed_height_still.url);
-              giphyImages.attr("data-animate", response.data[i].images.fixed_height.url);
-              giphyImages.attr("data-state", "still");
-              giphyImages.addClass("image");
-              $("#giphy-view").append(giphyRating, giphyImages);
-            }
-          })
-
-        };
-        function renderButtons() {
-          $("#giphy-buttons").empty();
-          for (let i = 0; i < gifs.length; i++) {
-            const button = $("<button>");
-
-            button.addClass("gif");
-            button.attr("data-name", gifs[i]);
-            button.text(gifs[i]);
-            $("#giphy-buttons").append(button);
-
-            $(".close").append(button);
-          }
-        }
-
-        /*           */
-
-
-
-        //========= ADD NEW BUTTON ============//
-        // This function handles events where one button is clicked
-        $("#giphy-images").on("click", function (event) {
-          // event.preventDefault() prevents the form from trying to submit itself.
-          // We're using a form so that the user can hit enter instead of clicking the button if they want
-          event.preventDefault();
-
-          // This line will grab the text from the input box
-          let gif = $("#giphy-input").val().trim();
-          // The gif from the textbox is then added to our array
-          gifs.push(gif);
-          $('#giphy-input').val('');
-
-          // calling renderButtons which handles the processing of our gif array
-          renderButtons();
-        });
-
-
-        //========= DELETE LAST BUTTON ========//
-
-        //This function removes the added gif button
-        function removeButton() {
-          $(".close").click(function () {
-            $(event.target).closest("giphy-buttons");
-          });
-        }
-
-
-
-        //====== PAUSE & PLAY =========
-        $(document).on("click", ".image", function () {
-          var state = $(this).attr('data-state');
-          if (state == 'still') {
-            $(this).attr('src', $(this).data('animate'));
-            $(this).attr('data-state', 'animate');
-          } else {
-            $(this).attr('src', $(this).data('still'));
-            $(this).attr('data-state', 'still');
-          }
-        });
-
-
-
-
-
-
-
-
-
-
-
-        //========= CLEARING =======
-        // This oject clears the current gifs on screen when another button is clicked.
-
-        $('#giphy-buttons').on('click', function (event) {
-          event.preventDefault();
-          $('#giphy-view').empty();
-        });
-
-        $(document).on("click", ".gif", displayGiphyInfo);
-
-        // Calling the renderButtons function at least once to display the initial list of gifs
-
-
-        renderButtons();
-
-      });
-    </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript" src="assets/javascript/app.js"></script>
+  <script type="text/javascript" src="assets/javascript/javascript.js"></script>
   </div>
 </body>
 
